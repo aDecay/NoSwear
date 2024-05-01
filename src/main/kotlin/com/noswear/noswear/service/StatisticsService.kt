@@ -10,9 +10,10 @@ class StatisticsService(
 ) {
     fun findAll(): List<StatisticsDto> {
         return frequencyRepository.findAll()
-            .map { StatisticsDto(
-                word = it.frequencyId.word,
-                frequency = it.frequency
+            .map { frequency ->
+                StatisticsDto(
+                word = frequency.frequencyId.word,
+                frequency = frequency.frequency
             ) }.toList()
     }
 }
