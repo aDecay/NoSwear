@@ -4,5 +4,5 @@ import lombok.Data
 
 @Data
 class RecordDto (
-    val data: ByteArray
+    val data: String
 )
