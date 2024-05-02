@@ -36,6 +36,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.10")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    runtimeOnly("com.h2database:h2")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
