@@ -4,10 +4,13 @@ import com.noswear.noswear.domain.Frequency
 import com.noswear.noswear.domain.FrequencyId
 import com.noswear.noswear.dto.RecordDto
 import com.noswear.noswear.repository.FrequencyRepository
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
+
+private val logger = KotlinLogging.logger {}
 
 @RestController
 class SendController (
@@ -19,10 +22,8 @@ class SendController (
         val frequencyId = FrequencyId(date, date)
 
         val data = record.data
-        for (x in data) {
-            print(x)
-        }
-        println()
+        val length = data.length
+        logger.debug("length: ${length}, prefix: ${if (length < 10) length else 10}")
 
         return statisticsRepository.findById(frequencyId)
             .map { frequency ->
