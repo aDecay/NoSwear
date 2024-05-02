@@ -17,7 +17,7 @@ class Frequency(
         protected set
     @Column
     var frequency = frequency
-        protected set
+    //    protected set
 
     override fun equals(other: Any?): Boolean {
         if (other == null) {
