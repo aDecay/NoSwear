@@ -2,12 +2,14 @@ package com.noswear.noswear.service
 
 import com.noswear.noswear.domain.Frequency
 import com.noswear.noswear.domain.FrequencyId
+import com.noswear.noswear.domain.User
 import com.noswear.noswear.repository.FrequencyRepository
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.time.LocalDate
 import java.util.*
 
 private val logger = KotlinLogging.logger {}
@@ -601,14 +603,19 @@ class SendService (
                 line.split(" ").map { split ->
                     badWords.forEach { word ->
                         if (split.contains(word)) {
-                            val frequencyId = FrequencyId("id", word)
+                            val tempUser = User(
+                                email = "email",
+                                password = "password",
+                                nickname = "nickname"
+                            )
+                            val frequencyId = FrequencyId(tempUser, LocalDate.now(), word)
 
                             frequencyRepository.findById(frequencyId)
                                 .map { frequency ->
-                                    frequency.frequency += 1
+                                    frequency.count += 1
                                     frequencyRepository.save(frequency)
                                 }.orElseGet {
-                                    frequencyRepository.save(Frequency(frequencyId, 1))
+                                    frequencyRepository.save(Frequency(frequencyId))
                                 }
                         }
                     }

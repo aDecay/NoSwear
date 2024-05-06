@@ -1,18 +1,18 @@
 package com.noswear.noswear.domain
 
 import jakarta.persistence.*
-import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 import java.time.LocalDate
 import java.util.*
 
 @Entity
-class Frequency (
+class Ratio(
     @EmbeddedId
-    val frequencyId: FrequencyId,
+    val ratioId: RatioId,
     @Column
-    @NotNull
-    var count: Int = 1
+    var normal: Int = 0,
+    @Column
+    var profanity: Int = 0
 ) {
     override fun equals(other: Any?): Boolean {
         if (other == null) {
@@ -23,19 +23,17 @@ class Frequency (
             return false
         }
 
-        return frequencyId == (other as Frequency).frequencyId
+        return ratioId == (other as Ratio).ratioId
     }
 
-    override fun hashCode() = Objects.hashCode(frequencyId)
+    override fun hashCode() = Objects.hashCode(ratioId)
 }
 
 @Embeddable
-data class FrequencyId(
+data class RatioId(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
     val user: User,
     @Column(columnDefinition = "DATE")
-    val date: LocalDate,
-    @Column
-    val word: String,
+    val date: LocalDate
 ) : Serializable
