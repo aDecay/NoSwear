@@ -21,8 +21,13 @@ class StatisticsController(
     }
 
     @GetMapping("/most-used")
-    fun mostUsed() {
-
+    fun mostUsed(readDto: ReadDto): String? {
+        val resultList = perWord(readDto, 1)
+        return if (resultList.isEmpty()) {
+            null
+        } else {
+            resultList[0].word
+        }
     }
 
     @GetMapping("/per-word")
