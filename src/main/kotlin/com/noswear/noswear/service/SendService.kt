@@ -2,8 +2,11 @@ package com.noswear.noswear.service
 
 import com.noswear.noswear.domain.Frequency
 import com.noswear.noswear.domain.FrequencyId
-import com.noswear.noswear.domain.User
+import com.noswear.noswear.domain.Ratio
+import com.noswear.noswear.domain.RatioId
 import com.noswear.noswear.repository.FrequencyRepository
+import com.noswear.noswear.repository.RatioRepository
+import com.noswear.noswear.repository.UserRepository
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.io.BufferedReader
@@ -16,7 +19,9 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class SendService (
-    private val frequencyRepository: FrequencyRepository
+    private val userRepository: UserRepository,
+    private val frequencyRepository: FrequencyRepository,
+    private val ratioRepository: RatioRepository
 ) {
     fun analyze(id: Int, data: String) {
         val badWords = arrayListOf("간나",
@@ -594,6 +599,10 @@ class SendService (
         val file = File(path)
         file.writeBytes(byteArray)
 
+        val user = userRepository.findById(id).get()
+        var normal = 0
+        var profanity = 0
+
         val processBuilder = ProcessBuilder("whisper", path, "--language", "Korean", "--output_format", "txt")
         val process = processBuilder.start()
         BufferedReader(InputStreamReader(process.inputStream))
@@ -601,14 +610,10 @@ class SendService (
                 logger.info(line)
 
                 line.split(" ").map { split ->
+                    var isProfanity = false
                     badWords.forEach { word ->
                         if (split.contains(word)) {
-                            val tempUser = User(
-                                email = "email",
-                                password = "password",
-                                nickname = "nickname"
-                            )
-                            val frequencyId = FrequencyId(tempUser, LocalDate.now(), word)
+                            val frequencyId = FrequencyId(user, LocalDate.now(), word)
 
                             frequencyRepository.findById(frequencyId)
                                 .map { frequency ->
@@ -617,9 +622,24 @@ class SendService (
                                 }.orElseGet {
                                     frequencyRepository.save(Frequency(frequencyId))
                                 }
+                            isProfanity = true
                         }
                     }
+                    if (isProfanity)
+                        profanity++
+                    else
+                        normal++
                 }
+            }
+
+        val ratioId = RatioId(user, LocalDate.now())
+        ratioRepository.findById(ratioId)
+            .map { ratio ->
+                ratio.normal += normal
+                ratio.profanity += profanity
+                ratioRepository.save(ratio)
+            }.orElseGet {
+                ratioRepository.save(Ratio(ratioId, normal, profanity))
             }
         file.delete()
     }
