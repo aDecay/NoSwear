@@ -18,7 +18,7 @@ private val logger = KotlinLogging.logger {}
 class SendService (
     private val frequencyRepository: FrequencyRepository
 ) {
-    fun analyze(data: String) {
+    fun analyze(id: Int, data: String) {
         val badWords = arrayListOf("간나",
             "갈보",
             "강간",

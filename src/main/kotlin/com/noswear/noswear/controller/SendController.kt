@@ -13,6 +13,6 @@ class SendController (
 ) {
     @PostMapping("/send")
     fun send(@RequestBody record: RecordDto) {
-        sendService.analyze(record.data)
+        sendService.analyze(record.id, record.data)
     }
 }
