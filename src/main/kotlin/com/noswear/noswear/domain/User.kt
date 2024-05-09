@@ -16,7 +16,7 @@ class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
-    @Column
+    @Column(unique = true)
     @NotNull
     val email: String,
 
