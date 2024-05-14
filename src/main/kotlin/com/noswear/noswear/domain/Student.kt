@@ -7,8 +7,8 @@ import java.util.*
 class Student (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
-    @Column(nullable = false)
+    val id: Int? = null,
+    @Column(nullable = false, unique = true)
     val email: String,
     @Column(nullable = false)
     val password: String,
