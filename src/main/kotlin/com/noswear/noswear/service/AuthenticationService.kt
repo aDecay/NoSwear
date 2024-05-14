@@ -1,30 +1,37 @@
 package com.noswear.noswear.service
 
 import com.noswear.noswear.domain.*
+import com.noswear.noswear.dto.LoginDto
 import com.noswear.noswear.dto.StudentDto
 import com.noswear.noswear.dto.TeacherDto
 import com.noswear.noswear.repository.*
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class AuthenticationService(
-    val teacherRepository: TeacherRepository,
-    val studentRepository: StudentRepository,
+    val userRepository: UserRepository,
     val schoolRepository: SchoolRepository,
     val worksRepository: WorksRepository,
     val classRepository: ClassRepository,
     val withinRepository: WithinRepository,
     val teachesRepository: TeachesRepository,
-    val belongsRepository: BelongsRepository
+    val belongsRepository: BelongsRepository,
+    val passwordEncoder: PasswordEncoder,
+    val authenticationManager: AuthenticationManager
 ) {
-    fun teacherRegister(teacherDto: TeacherDto): Teacher {
-        val teacherEntity = Teacher(
+    fun teacherRegister(teacherDto: TeacherDto): User {
+        val teacherEntity = User(
             email = teacherDto.email,
-            password = teacherDto.password,
-            name = teacherDto.name
+            password = passwordEncoder.encode(teacherDto.password),
+            name = teacherDto.name,
+            role = if (teacherDto.create) "MANAGER" else "TEACHER"
         )
 
-        val teacherResult = teacherRepository.save(teacherEntity)
+        val teacherResult = userRepository.save(teacherEntity)
 
         lateinit var schoolId: String
         if (teacherDto.create) {
@@ -71,14 +78,15 @@ class AuthenticationService(
         return teacherResult
     }
 
-    fun studentRegister(studentDto: StudentDto): Student {
-        val studentEntity = Student(
+    fun studentRegister(studentDto: StudentDto): User {
+        val studentEntity = User(
             email = studentDto.email,
-            password = studentDto.password,
-            name = studentDto.name
+            password = passwordEncoder.encode(studentDto.password),
+            name = studentDto.name,
+            role = "STUDENT"
         )
 
-        val studentResult = studentRepository.save(studentEntity)
+        val studentResult = userRepository.save(studentEntity)
 
         val belongsEntity = Belongs(
             id = studentResult.id!!,
@@ -88,5 +96,17 @@ class AuthenticationService(
         belongsRepository.save(belongsEntity)
 
         return studentResult
+    }
+
+    fun authenticate(loginDto: LoginDto): User {
+        authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                loginDto.email,
+                loginDto.password
+            )
+        )
+
+        return userRepository.findByEmail(loginDto.email)
+            ?: throw UsernameNotFoundException("User not found")
     }
 }
