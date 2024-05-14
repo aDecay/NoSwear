@@ -14,7 +14,8 @@ class AuthenticationService(
     val worksRepository: WorksRepository,
     val classRepository: ClassRepository,
     val withinRepository: WithinRepository,
-    val teachesRepository: TeachesRepository
+    val teachesRepository: TeachesRepository,
+    val belongsRepository: BelongsRepository
 ) {
     fun teacherRegister(teacherDto: TeacherDto): Teacher {
         val teacherEntity = Teacher(
@@ -71,12 +72,21 @@ class AuthenticationService(
     }
 
     fun studentRegister(studentDto: StudentDto): Student {
-        val student = Student(
+        val studentEntity = Student(
             email = studentDto.email,
             password = studentDto.password,
             name = studentDto.name
         )
 
-        return studentRepository.save(student)
+        val studentResult = studentRepository.save(studentEntity)
+
+        val belongsEntity = Belongs(
+            id = studentResult.id!!,
+            cId = studentDto.classId
+        )
+
+        belongsRepository.save(belongsEntity)
+
+        return studentResult
     }
 }
