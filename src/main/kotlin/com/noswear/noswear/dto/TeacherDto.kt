@@ -1,6 +1,7 @@
 package com.noswear.noswear.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TeacherDto (
@@ -8,6 +9,8 @@ data class TeacherDto (
     val password: String,
     val name: String,
     val create: Boolean,
-    val code: String?,
+    val schoolName: String?,
+    val startDate: LocalDate?,
+    val schoolId: String?,
     val className: String
 )
