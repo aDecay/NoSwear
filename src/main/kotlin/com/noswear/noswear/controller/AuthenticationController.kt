@@ -37,7 +37,7 @@ class AuthenticationController(
     fun authenticate(@RequestBody loginDto: LoginDto): ResponseEntity<LoginResponse> {
         val authenticatedUser = authenticationService.authenticate(loginDto)
         val jwtToken = jwtService.generateToken(authenticatedUser)
-        val loginResponse = LoginResponse(jwtToken, jwtService.jwtExpiration)
+        val loginResponse = LoginResponse(jwtToken, jwtService.jwtExpiration, authenticatedUser.role)
 
         return ResponseEntity.ok(loginResponse)
     }
