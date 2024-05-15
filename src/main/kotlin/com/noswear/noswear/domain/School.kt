@@ -5,7 +5,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import org.hibernate.annotations.GenericGenerator
-import java.time.LocalDate
 import java.util.*
 
 @Entity
@@ -15,9 +14,7 @@ class School(
     @GenericGenerator(name = "shortStringGenerator", strategy = "com.noswear.noswear.utils.ShortStringGenerator")
     val schoolId: String? = null,
     @Column(nullable = false)
-    val schoolName: String,
-    @Column(nullable = false, columnDefinition = "DATE")
-    val startDate: LocalDate
+    val schoolName: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (other == null) {

@@ -36,8 +36,7 @@ class AuthenticationService(
         lateinit var schoolId: String
         if (teacherDto.create) {
             val schoolEntity = School(
-                schoolName = teacherDto.schoolName!!,
-                startDate = teacherDto.startDate!!
+                schoolName = teacherDto.schoolName!!
             )
 
             val schoolResult = schoolRepository.save(schoolEntity)
