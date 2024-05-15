@@ -8,6 +8,7 @@ import com.noswear.noswear.dto.TeacherDto
 import com.noswear.noswear.security.JwtService
 import com.noswear.noswear.service.AuthenticationService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -40,5 +41,20 @@ class AuthenticationController(
         val loginResponse = LoginResponse(jwtToken, jwtService.jwtExpiration, authenticatedUser.role)
 
         return ResponseEntity.ok(loginResponse)
+    }
+
+    @GetMapping("/exists/email")
+    fun emailExists(email: String): Boolean {
+        return authenticationService.emailExists(email)
+    }
+
+    @GetMapping("/exists/school")
+    fun schoolExists(schoolId: String): Boolean {
+        return authenticationService.schoolExists(schoolId)
+    }
+
+    @GetMapping("/exists/class")
+    fun classExists(classId: String): Boolean {
+        return authenticationService.classExists(classId)
     }
 }

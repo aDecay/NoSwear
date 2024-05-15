@@ -109,4 +109,16 @@ class AuthenticationService(
         return userRepository.findByEmail(loginDto.email)
             ?: throw UsernameNotFoundException("User not found")
     }
+
+    fun emailExists(email: String): Boolean {
+        return userRepository.existsByEmail(email)
+    }
+
+    fun schoolExists(schoolId: String): Boolean {
+        return schoolRepository.existsBySchoolId(schoolId)
+    }
+
+    fun classExists(classId: String): Boolean {
+        return classRepository.existsByClassId(classId)
+    }
 }
