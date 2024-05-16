@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.time.LocalDate
 import java.util.*
 
 @Service
@@ -81,28 +82,46 @@ class StatisticsService(
                 }
             }
 
-        val totalCountId = TotalCountId(
-            id = id,
-            date = date,
-            time = hour
-        )
+        if (count > 0) {
+            val totalCountId = TotalCountId(
+                id = id,
+                date = date,
+                time = hour
+            )
 
-        totalCountRepository.findById(totalCountId)
-            .map { totalCount ->
-                totalCount.count += count
-                totalCountRepository.save(totalCount)
-            }.orElseGet {
-                totalCountRepository.save(
-                    TotalCount(
-                        totalCountId = totalCountId,
-                        count = count
+            totalCountRepository.findById(totalCountId)
+                .map { totalCount ->
+                    totalCount.count += count
+                    totalCountRepository.save(totalCount)
+                }.orElseGet {
+                    totalCountRepository.save(
+                        TotalCount(
+                            totalCountId = totalCountId,
+                            count = count
+                        )
                     )
-                )
-            }
+                }
+        }
 
         File("./$uuid.txt").delete()
         file.delete()
 
         return result
+    }
+
+    fun getTotalCount(email: String, date: LocalDate): List<TotalCount> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+        val id = user.id!!
+
+        return totalCountRepository.findByTotalCountIdIdAndTotalCountIdDate(id, date)
+    }
+
+    fun getWordCount(email: String, date: LocalDate): List<WordCount> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+        val id = user.id!!
+
+        return wordCountRepository.findByWordCountIdIdAndWordCountIdDate(id, date)
     }
 }
