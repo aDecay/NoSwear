@@ -1,6 +1,6 @@
 package com.noswear.noswear.controller
 
-import com.noswear.noswear.domain.Program
+import com.noswear.noswear.dto.JoinDto
 import com.noswear.noswear.dto.ProgramDto
 import com.noswear.noswear.service.ManageService
 import org.springframework.http.ResponseEntity
@@ -17,14 +17,50 @@ import org.springframework.web.bind.annotation.RequestMapping
 class ManageController(
     private val manageService: ManageService
 ) {
-    @PostMapping("/make-program")
+    @PostMapping("/program/create")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
-    fun createProgram(@RequestBody programDto: ProgramDto): ResponseEntity<Program> {
+    fun createProgram(@RequestBody programDto: ProgramDto): ResponseEntity<ProgramDto> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val teacher = manageService.createProgram(name, programDto)
-        return ResponseEntity.ok(teacher)
+        val program = manageService.createProgram(name, programDto)
+        return ResponseEntity.ok(ProgramDto.of(program))
+    }
+
+    @GetMapping("/program/get/all")
+    @PreAuthorize("isAuthenticated()")
+    fun getAllPrograms(): ResponseEntity<List<ProgramDto>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val programs = mutableListOf<ProgramDto>()
+        manageService.getALlPrograms(name).map { program ->
+            programs.add(ProgramDto.of(program))
+        }
+        return ResponseEntity.ok(programs)
+    }
+
+    @GetMapping("/program/get/me")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun getMyProgram(): ResponseEntity<List<ProgramDto>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val programs = mutableListOf<ProgramDto>()
+        manageService.getMyPrograms(name).map { program ->
+            programs.add(ProgramDto.of(program))
+        }
+        return ResponseEntity.ok(programs)
+    }
+
+    @PostMapping("/program/join")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun joinProgram(@RequestBody joinDto: JoinDto): ResponseEntity<ProgramDto> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val program = manageService.joinProgram(name, joinDto)
+        return ResponseEntity.ok(ProgramDto.of(program))
     }
 
     @GetMapping("/code/school")
