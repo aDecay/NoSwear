@@ -26,7 +26,7 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
-    @GetMapping("/total-count")
+    @GetMapping("/count/total")
     @PreAuthorize("hasRole('STUDENT')")
     fun getTotalCount(date: LocalDate): ResponseEntity<TotalCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
@@ -36,7 +36,7 @@ class StatisticsController(
         return ResponseEntity.ok(TotalCountResponse.of(totalCount))
     }
 
-    @GetMapping("/word-count")
+    @GetMapping("/count/word")
     @PreAuthorize("hasRole('STUDENT')")
     fun getWordCount(date: LocalDate): ResponseEntity<List<WordCountResult>> {
         val authentication = SecurityContextHolder.getContext().authentication
