@@ -1,7 +1,7 @@
 package com.noswear.noswear.controller
 
 import com.noswear.noswear.dto.SendDto
-import com.noswear.noswear.dto.TotalCountResult
+import com.noswear.noswear.dto.TotalCountResponse
 import com.noswear.noswear.dto.WordCountResult
 import com.noswear.noswear.service.StatisticsService
 import org.springframework.http.ResponseEntity
@@ -28,21 +28,12 @@ class StatisticsController(
 
     @GetMapping("/total-count")
     @PreAuthorize("hasRole('STUDENT')")
-    fun getTotalCount(date: LocalDate): ResponseEntity<List<TotalCountResult>> {
+    fun getTotalCount(date: LocalDate): ResponseEntity<TotalCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val result = mutableListOf<TotalCountResult>()
-        statisticsService.getTotalCount(name, date).map { totalCount ->
-            result.add(
-                TotalCountResult(
-                    hour = totalCount.totalCountId.time,
-                    count = totalCount.count
-                )
-            )
-        }
-
-        return ResponseEntity.ok(result)
+        val totalCount = statisticsService.getTotalCount(name, date)
+        return ResponseEntity.ok(TotalCountResponse.of(totalCount))
     }
 
     @GetMapping("/word-count")
