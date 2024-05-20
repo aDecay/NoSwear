@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDate
 
 interface WordCountRepository : JpaRepository<WordCount, WordCountId> {
-    fun findByWordCountIdIdAndWordCountIdDate(id: Int, date: LocalDate): List<WordCount>
+    fun findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(id: Int, date: LocalDate): List<WordCount>
 }

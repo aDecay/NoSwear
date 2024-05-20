@@ -122,6 +122,6 @@ class StatisticsService(
             ?: throw UsernameNotFoundException("User not found")
         val id = user.id!!
 
-        return wordCountRepository.findByWordCountIdIdAndWordCountIdDate(id, date)
+        return wordCountRepository.findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(id, date)
     }
 }
