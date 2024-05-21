@@ -2,6 +2,7 @@ package com.noswear.noswear.controller
 
 import com.noswear.noswear.dto.JoinDto
 import com.noswear.noswear.dto.ProgramDto
+import com.noswear.noswear.dto.UserResponse
 import com.noswear.noswear.service.ManageService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -81,5 +82,25 @@ class ManageController(
 
         val classId = manageService.getClassCode(name)
         return ResponseEntity.ok(classId)
+    }
+
+    @GetMapping("/info/class")
+    @PreAuthorize("isAuthenticated()")
+    fun getClassInfo(): ResponseEntity<String> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val className = manageService.getClassInfo(name)
+        return ResponseEntity.ok(className)
+    }
+
+    @GetMapping("/info/user")
+    @PreAuthorize("isAuthenticated()")
+    fun getUserInfo(): ResponseEntity<UserResponse> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val user = manageService.getUserInfo(name)
+        return ResponseEntity.ok(UserResponse.of(user))
     }
 }

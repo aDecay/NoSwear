@@ -3,6 +3,7 @@ package com.noswear.noswear.service
 import com.noswear.noswear.domain.Joins
 import com.noswear.noswear.domain.JoinsId
 import com.noswear.noswear.domain.Program
+import com.noswear.noswear.domain.User
 import com.noswear.noswear.dto.JoinDto
 import com.noswear.noswear.dto.ProgramDto
 import com.noswear.noswear.repository.*
@@ -17,7 +18,8 @@ class ManageService(
     private val teachesRepository: TeachesRepository,
     private val worksRepository: WorksRepository,
     private val joinsRepository: JoinsRepository,
-    private val belongsRepository: BelongsRepository
+    private val belongsRepository: BelongsRepository,
+    private val classRepository: ClassRepository
 ) {
     fun createProgram(email: String, programDto: ProgramDto): Program {
         val user = userRepository.findByEmail(email)
@@ -104,5 +106,29 @@ class ManageService(
         return teachesRepository.findById(user.id!!)
             .orElseThrow()
             .cId
+    }
+
+    fun getClassInfo(email: String): String {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = if (user.role == "STUDENT") {
+            belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        } else {
+            teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        }
+
+        return classRepository.findById(cId)
+            .orElseThrow()
+            .className
+    }
+
+    fun getUserInfo(email: String): User {
+        return userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
     }
 }
