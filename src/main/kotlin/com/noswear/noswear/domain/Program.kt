@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import java.time.LocalDate
 import java.util.*
 
@@ -22,6 +23,9 @@ class Program(
     @Column(nullable = false, columnDefinition = "DATE")
     val endDate: LocalDate
 ) {
+    @OneToMany(mappedBy = "joinsId.program")
+    val joins = mutableListOf<Joins>()
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

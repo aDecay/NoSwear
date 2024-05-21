@@ -60,14 +60,26 @@ class ManageService(
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
-        val programs = mutableListOf<Program>()
-        joinsRepository.findByJoinsIdId(user.id!!).map { joins ->
-            programs.add(programRepository.findById(joins.joinsId.pId)
-                .orElseThrow())
+        return joinsRepository.findByJoinsIdId(user.id!!).map { joins ->
+            joins.joinsId.program
+        }
+    }
+
+    fun getCurrentProgram(email: String): Program? {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val program = if (user.role == "STUDENT") {
+            programRepository.findCurrentProgramByUserId(user.id!!)
+        } else {
+            val cId = teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+
+            programRepository.findCurrentProgramByClassId(cId)
         }
 
-
-        return programs
+        return program
     }
 
     fun joinProgram(email: String, joinDto: JoinDto): Program {
@@ -83,7 +95,7 @@ class ManageService(
         joinsRepository.save(Joins(
             JoinsId(
                 id = user.id!!,
-                pId = program.programId!!
+                program = program
             )
         ))
 

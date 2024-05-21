@@ -54,6 +54,20 @@ class ManageController(
         return ResponseEntity.ok(programs)
     }
 
+    @GetMapping("/program/get/current")
+    @PreAuthorize("isAuthenticated()")
+    fun getCurrentProgram(): ResponseEntity<ProgramDto?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val program = manageService.getCurrentProgram(name)
+        return ResponseEntity.ok(if (program != null) {
+            ProgramDto.of(program)
+        } else {
+            null
+        })
+    }
+
     @PostMapping("/program/join")
     @PreAuthorize("hasRole('STUDENT')")
     fun joinProgram(@RequestBody joinDto: JoinDto): ResponseEntity<ProgramDto> {

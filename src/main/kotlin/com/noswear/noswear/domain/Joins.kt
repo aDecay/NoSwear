@@ -4,6 +4,8 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import java.io.Serializable
 import java.util.*
 
@@ -31,6 +33,7 @@ class Joins(
 data class JoinsId(
     @Column(nullable = false)
     val id: Int,
-    @Column(nullable = false)
-    val pId: Int
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    val program: Program
 ) : Serializable
