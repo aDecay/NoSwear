@@ -5,9 +5,7 @@ import com.noswear.noswear.domain.TotalCountId
 import com.noswear.noswear.domain.WordCount
 import com.noswear.noswear.domain.WordCountId
 import com.noswear.noswear.dto.SendDto
-import com.noswear.noswear.repository.TotalCountRepository
-import com.noswear.noswear.repository.UserRepository
-import com.noswear.noswear.repository.WordCountRepository
+import com.noswear.noswear.repository.*
 import com.noswear.noswear.utils.ProfanityUtil
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
@@ -21,7 +19,9 @@ import java.util.*
 class StatisticsService(
     private val wordCountRepository: WordCountRepository,
     private val totalCountRepository: TotalCountRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val belongsRepository: BelongsRepository,
+    private val programRepository: ProgramRepository
 ) {
     fun analyzeProfanity(email: String, sendDto: SendDto): Map<String, Int> {
         val result = HashMap<String, Int>()
@@ -123,5 +123,24 @@ class StatisticsService(
         val id = user.id!!
 
         return wordCountRepository.findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(id, date)
+    }
+
+    fun getMyRank(email: String, programName: String): Int {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(user.id!!)
+            .orElseThrow()
+            .cId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return totalCountRepository.findRankByIdAndProgramIdAndStartDateAndEndDate(
+            user.id!!,
+            program.programId!!,
+            program.startDate,
+            program.endDate
+        )
     }
 }

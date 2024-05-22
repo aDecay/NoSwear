@@ -54,4 +54,14 @@ class StatisticsController(
 
         return ResponseEntity.ok(result)
     }
+
+    @GetMapping("/rank")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun getMyRank(programName: String): ResponseEntity<Int> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val rank = statisticsService.getMyRank(name, programName)
+        return ResponseEntity.ok(rank)
+    }
 }
