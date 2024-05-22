@@ -21,7 +21,8 @@ class StatisticsService(
     private val totalCountRepository: TotalCountRepository,
     private val userRepository: UserRepository,
     private val belongsRepository: BelongsRepository,
-    private val programRepository: ProgramRepository
+    private val programRepository: ProgramRepository,
+    private val teachesRepository: TeachesRepository
 ) {
     fun analyzeProfanity(email: String, sendDto: SendDto): Map<String, Int> {
         val result = HashMap<String, Int>()
@@ -123,6 +124,25 @@ class StatisticsService(
         val id = user.id!!
 
         return wordCountRepository.findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(id, date)
+    }
+
+    fun getGroupWordCount(email: String, programName: String): List<WordCountRepository.WordCountResultVo> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = if (user.role == "STUDENT") {
+            belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        } else {
+            teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        }
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return wordCountRepository.findGroupWordCount(program.programId!!, program.startDate, program.endDate)
     }
 
     fun getMyRank(email: String, programName: String): Int {

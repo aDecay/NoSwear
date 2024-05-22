@@ -55,6 +55,19 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
+    @GetMapping("/count/word/group")
+    @PreAuthorize("isAuthenticated()")
+    fun getGroupWordCount(programName: String): ResponseEntity<List<WordCountResult>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getGroupWordCount(name, programName).map { wordCountResultVo ->
+            WordCountResult.of(wordCountResultVo)
+        }
+
+        return ResponseEntity.ok(result)
+    }
+
     @GetMapping("/rank")
     @PreAuthorize("hasRole('STUDENT')")
     fun getMyRank(programName: String): ResponseEntity<Int> {
