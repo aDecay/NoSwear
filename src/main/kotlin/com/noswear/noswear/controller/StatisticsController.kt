@@ -1,5 +1,6 @@
 package com.noswear.noswear.controller
 
+import com.noswear.noswear.dto.DailyCountResponse
 import com.noswear.noswear.dto.SendDto
 import com.noswear.noswear.dto.TotalCountResponse
 import com.noswear.noswear.dto.WordCountResult
@@ -65,6 +66,16 @@ class StatisticsController(
             WordCountResult.of(wordCountResultVo)
         }
 
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("count/daily/group")
+    @PreAuthorize("isAuthenticated()")
+    fun getGroupDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getGroupDailyCount(name, programName)
         return ResponseEntity.ok(result)
     }
 

@@ -4,6 +4,7 @@ import com.noswear.noswear.domain.TotalCount
 import com.noswear.noswear.domain.TotalCountId
 import com.noswear.noswear.domain.WordCount
 import com.noswear.noswear.domain.WordCountId
+import com.noswear.noswear.dto.DailyCountResponse
 import com.noswear.noswear.dto.SendDto
 import com.noswear.noswear.repository.*
 import com.noswear.noswear.utils.ProfanityUtil
@@ -143,6 +144,26 @@ class StatisticsService(
             ?: throw Exception()
 
         return wordCountRepository.findGroupWordCount(program.programId!!, program.startDate, program.endDate)
+    }
+
+    fun getGroupDailyCount(email: String, programName: String): DailyCountResponse {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = if (user.role == "STUDENT") {
+            belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        } else {
+            teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        }
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        val dailyCount = totalCountRepository.findGroupDailyCount(program.programId!!, program.startDate, program.endDate)
+        return DailyCountResponse.of(dailyCount, program)
     }
 
     fun getMyRank(email: String, programName: String): Int {
