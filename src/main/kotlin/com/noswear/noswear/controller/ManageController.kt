@@ -3,6 +3,7 @@ package com.noswear.noswear.controller
 import com.noswear.noswear.dto.JoinDto
 import com.noswear.noswear.dto.ProgramDto
 import com.noswear.noswear.dto.UserResponse
+import com.noswear.noswear.dto.VoiceDto
 import com.noswear.noswear.service.ManageService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -116,5 +117,15 @@ class ManageController(
 
         val user = manageService.getUserInfo(name)
         return ResponseEntity.ok(UserResponse.of(user))
+    }
+
+    @PostMapping("/voice")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun saveVoice(@RequestBody voiceDto: VoiceDto): ResponseEntity<String> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        manageService.saveVoice(name, voiceDto)
+        return ResponseEntity.ok("success")
     }
 }

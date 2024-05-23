@@ -6,10 +6,13 @@ import com.noswear.noswear.domain.Program
 import com.noswear.noswear.domain.User
 import com.noswear.noswear.dto.JoinDto
 import com.noswear.noswear.dto.ProgramDto
+import com.noswear.noswear.dto.VoiceDto
 import com.noswear.noswear.repository.*
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import java.io.File
 import java.lang.Exception
+import java.util.*
 
 @Service
 class ManageService(
@@ -142,5 +145,19 @@ class ManageService(
     fun getUserInfo(email: String): User {
         return userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
+    }
+
+    fun saveVoice(email: String, voiceDto: VoiceDto) {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val path = "./voice_files/${user.id!!}.m4a"
+        val byteArray = Base64.getDecoder().decode(voiceDto.data)
+        val file = File(path)
+        if (file.exists()) {
+            file.delete()
+        }
+        file.createNewFile()
+        file.writeBytes(byteArray)
     }
 }
