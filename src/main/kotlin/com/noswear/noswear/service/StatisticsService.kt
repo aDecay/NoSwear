@@ -146,6 +146,21 @@ class StatisticsService(
         return wordCountRepository.findGroupWordCount(program.programId!!, program.startDate, program.endDate)
     }
 
+    fun getDailyCount(email: String, programName: String): DailyCountResponse {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        val dailyCount = totalCountRepository.findDailyCount(user.id!!, program.startDate, program.endDate)
+        return DailyCountResponse.of(dailyCount, program)
+    }
+
     fun getGroupDailyCount(email: String, programName: String): DailyCountResponse {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")

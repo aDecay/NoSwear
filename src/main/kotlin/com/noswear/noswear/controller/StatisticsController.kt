@@ -69,6 +69,16 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
+    @GetMapping("count/daily")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun getDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getDailyCount(name, programName)
+        return ResponseEntity.ok(result)
+    }
+
     @GetMapping("count/daily/group")
     @PreAuthorize("isAuthenticated()")
     fun getGroupDailyCount(programName: String): ResponseEntity<DailyCountResponse> {

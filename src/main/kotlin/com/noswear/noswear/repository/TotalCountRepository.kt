@@ -19,7 +19,14 @@ interface TotalCountRepository : JpaRepository<TotalCount, TotalCountId> {
             "SELECT rank FROM ranked WHERE id=:id",
         nativeQuery = true)
     fun findRankByIdAndProgramIdAndStartDateAndEndDate(id: Int, programId: Int, startDate: LocalDate, endDate: LocalDate): Int
-    @Query("SELECT date AS date, SUM(count) AS count " +
+
+    @Query("SELECT date, SUM(count) AS count " +
+            "FROM total_count " +
+            "WHERE id = :id AND date >= :startDate AND date <= :endDate " +
+            "GROUP BY date",
+        nativeQuery = true)
+    fun findDailyCount(id: Int, startDate: LocalDate, endDate: LocalDate): List<DailyCountVo>
+    @Query("SELECT date, SUM(count) AS count " +
             "FROM total_count t " +
             "JOIN joins j " +
             "WHERE t.id = j.id AND j.program_id = :programId AND t.date >= :startDate AND t.date <= :endDate " +
