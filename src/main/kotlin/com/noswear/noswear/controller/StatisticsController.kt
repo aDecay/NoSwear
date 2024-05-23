@@ -69,7 +69,7 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
-    @GetMapping("count/daily")
+    @GetMapping("/count/daily")
     @PreAuthorize("hasRole('STUDENT')")
     fun getDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
@@ -79,13 +79,33 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
-    @GetMapping("count/daily/group")
+    @GetMapping("/count/daily/group")
     @PreAuthorize("isAuthenticated()")
     fun getGroupDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
         val result = statisticsService.getGroupDailyCount(name, programName)
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/most-used/day")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun getMostUsedWordInDay(date: LocalDate): ResponseEntity<String?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getMostUsedWordInDay(name, date)
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/most-used/program")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun getMostUsedWordInDay(programName: String): ResponseEntity<String?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getMostUsedWordInDay(name, programName)
         return ResponseEntity.ok(result)
     }
 

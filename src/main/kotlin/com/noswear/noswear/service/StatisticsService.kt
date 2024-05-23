@@ -181,6 +181,27 @@ class StatisticsService(
         return DailyCountResponse.of(dailyCount, program)
     }
 
+    fun getMostUsedWordInDay(email: String, date: LocalDate): String? {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        return wordCountRepository.findFirstMostUsedWordInDay(user.id!!, date)
+    }
+
+    fun getMostUsedWordInDay(email: String, programName: String): String? {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(user.id!!)
+            .orElseThrow()
+            .cId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return wordCountRepository.findFirstMostUsedWordInProgram(program.programId!!, program.startDate, program.endDate )
+    }
+
     fun getMyRank(email: String, programName: String): Int {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
