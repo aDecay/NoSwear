@@ -45,7 +45,7 @@ class StatisticsService(
 
         var count = 0
 
-        val processBuilder = ProcessBuilder("whisper", path, "--language", "Korean", "--output_format", "txt")
+        val processBuilder = ProcessBuilder("python3", "./capstone_ai/run.py", "--input1", "./voice_files/${user.id!!}.m4a", "--input2", path)
         val process = processBuilder.start()
         BufferedReader(InputStreamReader(process.inputStream))
             .forEachLine { line ->
