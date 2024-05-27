@@ -14,6 +14,6 @@ interface ProgramRepository : JpaRepository<Program, Int> {
     @Query("SELECT p " +
             "FROM Program p " +
             "JOIN p.joins j " +
-            "WHERE j.joinsId.id = :id AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE")
+            "WHERE j.joinsId.user.id = :id AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE")
     fun findCurrentProgramByUserId(id: Int): Program?
 }

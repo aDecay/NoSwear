@@ -1,6 +1,5 @@
 package com.noswear.noswear.domain
 
-import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
@@ -31,8 +30,9 @@ class Joins(
 
 @Embeddable
 data class JoinsId(
-    @Column(nullable = false)
-    val id: Int,
+    @ManyToOne
+    @JoinColumn(name = "id")
+    val user: User,
     @ManyToOne
     @JoinColumn(name = "program_id")
     val program: Program

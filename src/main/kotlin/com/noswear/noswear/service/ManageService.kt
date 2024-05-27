@@ -63,7 +63,7 @@ class ManageService(
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
-        return joinsRepository.findByJoinsIdId(user.id!!).map { joins ->
+        return joinsRepository.findByJoinsIdUserId(user.id!!).map { joins ->
             joins.joinsId.program
         }
     }
@@ -97,7 +97,7 @@ class ManageService(
 
         joinsRepository.save(Joins(
             JoinsId(
-                id = user.id!!,
+                user = user,
                 program = program
             )
         ))
@@ -115,6 +115,19 @@ class ManageService(
 
         return belongsRepository.findByClassId(cId).map {
             it.user
+        }
+    }
+
+    fun getProgramStudents(email: String, programName: String): List<User> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = teachesRepository.findById(user.id!!)
+            .orElseThrow()
+            .cId
+
+        return joinsRepository.findByJoinsIdProgramClassIdAndJoinsIdProgramProgramName(cId, programName).map {
+            it.joinsId.user
         }
     }
 
