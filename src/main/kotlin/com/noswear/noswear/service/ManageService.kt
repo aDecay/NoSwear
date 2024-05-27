@@ -49,7 +49,7 @@ class ManageService(
         val classId = if (user.role == "STUDENT") {
             belongsRepository.findById(user.id!!)
                 .orElseThrow()
-                .cId
+                .classId
         } else {
             teachesRepository.findById(user.id!!)
                 .orElseThrow()
@@ -92,7 +92,7 @@ class ManageService(
         val belongs = belongsRepository.findById(user.id!!)
             .orElseThrow()
 
-        val program = programRepository.findByClassIdAndProgramName(belongs.cId, joinDto.programName)
+        val program = programRepository.findByClassIdAndProgramName(belongs.classId, joinDto.programName)
             ?: throw Exception()
 
         joinsRepository.save(Joins(
@@ -103,6 +103,19 @@ class ManageService(
         ))
 
         return program
+    }
+
+    fun getClassStudents(email: String): List<User> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = teachesRepository.findById(user.id!!)
+            .orElseThrow()
+            .cId
+
+        return belongsRepository.findByClassId(cId).map {
+            it.user
+        }
     }
 
     fun getSchoolCode(email: String): String {
@@ -130,7 +143,7 @@ class ManageService(
         val cId = if (user.role == "STUDENT") {
             belongsRepository.findById(user.id!!)
                 .orElseThrow()
-                .cId
+                .classId
         } else {
             teachesRepository.findById(user.id!!)
                 .orElseThrow()

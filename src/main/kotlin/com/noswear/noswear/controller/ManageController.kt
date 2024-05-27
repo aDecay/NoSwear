@@ -79,6 +79,18 @@ class ManageController(
         return ResponseEntity.ok(ProgramDto.of(program))
     }
 
+    @GetMapping("/students/all")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getStudents(): ResponseEntity<List<UserResponse>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = manageService.getClassStudents(name)
+        return ResponseEntity.ok(result.map { user ->
+            UserResponse.of(user)
+        })
+    }
+
     @GetMapping("/code/school")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
     fun getSchoolCode(): ResponseEntity<String> {

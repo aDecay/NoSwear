@@ -1,17 +1,20 @@
 package com.noswear.noswear.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import java.util.*
 
 @Entity
 class Belongs (
-    @Id
-    val id: Int,
+    @OneToOne(fetch = FetchType.EAGER)
+    @MapsId
+    @JoinColumn(name = "id")
+    val user: User,
     @Column(nullable = false)
-    val cId: String
+    val classId: String
 ) {
+    @Id
+    val id: Int? = null
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

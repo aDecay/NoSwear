@@ -134,7 +134,7 @@ class StatisticsService(
         val cId = if (user.role == "STUDENT") {
             belongsRepository.findById(user.id!!)
                 .orElseThrow()
-                .cId
+                .classId
         } else {
             teachesRepository.findById(user.id!!)
                 .orElseThrow()
@@ -152,7 +152,7 @@ class StatisticsService(
 
         val cId = belongsRepository.findById(user.id!!)
                 .orElseThrow()
-                .cId
+                .classId
 
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
@@ -168,7 +168,7 @@ class StatisticsService(
         val cId = if (user.role == "STUDENT") {
             belongsRepository.findById(user.id!!)
                 .orElseThrow()
-                .cId
+                .classId
         } else {
             teachesRepository.findById(user.id!!)
                 .orElseThrow()
@@ -194,7 +194,7 @@ class StatisticsService(
 
         val cId = belongsRepository.findById(user.id!!)
             .orElseThrow()
-            .cId
+            .classId
 
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
@@ -208,7 +208,7 @@ class StatisticsService(
 
         val cId = belongsRepository.findById(user.id!!)
             .orElseThrow()
-            .cId
+            .classId
 
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()

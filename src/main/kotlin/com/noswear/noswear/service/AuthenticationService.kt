@@ -88,8 +88,8 @@ class AuthenticationService(
         val studentResult = userRepository.save(studentEntity)
 
         val belongsEntity = Belongs(
-            id = studentResult.id!!,
-            cId = studentDto.classId
+            user = studentResult,
+            classId = studentDto.classId
         )
 
         belongsRepository.save(belongsEntity)
