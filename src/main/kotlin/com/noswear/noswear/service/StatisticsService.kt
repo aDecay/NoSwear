@@ -119,12 +119,28 @@ class StatisticsService(
         return totalCountRepository.findByTotalCountIdIdAndTotalCountIdDate(id, date)
     }
 
+    fun getTotalCountByTeacher(email: String, studentId: Int, date: LocalDate): List<TotalCount> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+        val id = user.id!!
+
+        return totalCountRepository.findByTotalCountIdIdAndTotalCountIdDate(studentId, date)
+    }
+
     fun getWordCount(email: String, date: LocalDate): List<WordCount> {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
         val id = user.id!!
 
         return wordCountRepository.findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(id, date)
+    }
+
+    fun getWordCountByTeacher(email: String, studentId: Int, date: LocalDate): List<WordCount> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+        val id = user.id!!
+
+        return wordCountRepository.findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(studentId, date)
     }
 
     fun getGroupWordCount(email: String, programName: String): List<WordCountRepository.WordCountResultVo> {
@@ -161,6 +177,21 @@ class StatisticsService(
         return DailyCountResponse.of(dailyCount, program)
     }
 
+    fun getDailyCountByTeacher(email: String, studentId: Int, programName: String): DailyCountResponse {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(studentId)
+            .orElseThrow()
+            .classId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        val dailyCount = totalCountRepository.findDailyCount(studentId, program.startDate, program.endDate)
+        return DailyCountResponse.of(dailyCount, program)
+    }
+
     fun getGroupDailyCount(email: String, programName: String): DailyCountResponse {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
@@ -188,7 +219,14 @@ class StatisticsService(
         return wordCountRepository.findFirstMostUsedWordInDay(user.id!!, date)
     }
 
-    fun getMostUsedWordInDay(email: String, programName: String): String? {
+    fun getMostUsedWordInDayByTeacher(email: String, studentId: Int, date: LocalDate): String? {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        return wordCountRepository.findFirstMostUsedWordInDay(studentId, date)
+    }
+
+    fun getMostUsedWordInProgram(email: String, programName: String): String? {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -199,7 +237,21 @@ class StatisticsService(
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
 
-        return wordCountRepository.findFirstMostUsedWordInProgram(program.programId!!, program.startDate, program.endDate )
+        return wordCountRepository.findFirstMostUsedWordInProgram(program.programId!!, program.startDate, program.endDate)
+    }
+
+    fun getMostUsedWordInProgramByTeacher(email: String, studentId: Int, programName: String): String? {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(studentId)
+            .orElseThrow()
+            .classId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return wordCountRepository.findFirstMostUsedWordInProgram(program.programId!!, program.startDate, program.endDate)
     }
 
     fun getMyRank(email: String, programName: String): Int {
@@ -215,6 +267,25 @@ class StatisticsService(
 
         return totalCountRepository.findRankByIdAndProgramIdAndStartDateAndEndDate(
             user.id!!,
+            program.programId!!,
+            program.startDate,
+            program.endDate
+        )
+    }
+
+    fun getStudentRankByTeacher(email: String, studentId: Int, programName: String): Int {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(studentId)
+            .orElseThrow()
+            .classId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return totalCountRepository.findRankByIdAndProgramIdAndStartDateAndEndDate(
+            studentId,
             program.programId!!,
             program.startDate,
             program.endDate

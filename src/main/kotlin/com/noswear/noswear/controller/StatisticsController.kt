@@ -37,6 +37,16 @@ class StatisticsController(
         return ResponseEntity.ok(TotalCountResponse.of(totalCount))
     }
 
+    @GetMapping("/count/total/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getTotalCountByTeacher(@PathVariable id: Int, date: LocalDate): ResponseEntity<TotalCountResponse> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val totalCount = statisticsService.getTotalCountByTeacher(name, id, date)
+        return ResponseEntity.ok(TotalCountResponse.of(totalCount))
+    }
+
     @GetMapping("/count/word")
     @PreAuthorize("hasRole('STUDENT')")
     fun getWordCount(date: LocalDate): ResponseEntity<List<WordCountResult>> {
@@ -53,6 +63,24 @@ class StatisticsController(
             )
         }
 
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/count/word/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getWordCountByTeacher(@PathVariable id: Int, date: LocalDate): ResponseEntity<List<WordCountResult>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = mutableListOf<WordCountResult>()
+        statisticsService.getWordCountByTeacher(name, id, date).map { wordCount ->
+            result.add(
+                WordCountResult(
+                    word = wordCount.wordCountId.word,
+                    count = wordCount.count
+                )
+            )
+        }
         return ResponseEntity.ok(result)
     }
 
@@ -79,6 +107,16 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
+    @GetMapping("/count/daily/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getDailyCountByTeacher(@PathVariable id: Int, programName: String): ResponseEntity<DailyCountResponse> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getDailyCountByTeacher(name, id, programName)
+        return ResponseEntity.ok(result)
+    }
+
     @GetMapping("/count/daily/group")
     @PreAuthorize("isAuthenticated()")
     fun getGroupDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
@@ -99,13 +137,33 @@ class StatisticsController(
         return ResponseEntity.ok(result)
     }
 
-    @GetMapping("/most-used/program")
-    @PreAuthorize("hasRole('STUDENT')")
-    fun getMostUsedWordInDay(programName: String): ResponseEntity<String?> {
+    @GetMapping("/most-used/day/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getMostUsedWordInDay(@PathVariable id: Int, date: LocalDate): ResponseEntity<String?> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val result = statisticsService.getMostUsedWordInDay(name, programName)
+        val result = statisticsService.getMostUsedWordInDayByTeacher(name, id, date)
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/most-used/program")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun getMostUsedWordInProgram(programName: String): ResponseEntity<String?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getMostUsedWordInProgram(name, programName)
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/most-used/program/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getMostUsedWordInProgramByTeacher(@PathVariable id: Int, programName: String): ResponseEntity<String?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = statisticsService.getMostUsedWordInProgramByTeacher(name, id, programName)
         return ResponseEntity.ok(result)
     }
 
@@ -116,6 +174,16 @@ class StatisticsController(
         val name = authentication.name
 
         val rank = statisticsService.getMyRank(name, programName)
+        return ResponseEntity.ok(rank)
+    }
+
+    @GetMapping("/rank/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
+    fun getMyRank(@PathVariable id: Int, programName: String): ResponseEntity<Int> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val rank = statisticsService.getStudentRankByTeacher(name, id, programName)
         return ResponseEntity.ok(rank)
     }
 }
