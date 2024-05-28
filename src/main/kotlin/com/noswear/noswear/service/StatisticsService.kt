@@ -237,7 +237,7 @@ class StatisticsService(
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
 
-        return wordCountRepository.findFirstMostUsedWordInProgram(program.programId!!, program.startDate, program.endDate)
+        return wordCountRepository.findFirstMostUsedWordInProgram(user.id!!, program.startDate, program.endDate)
     }
 
     fun getMostUsedWordInProgramByTeacher(email: String, studentId: Int, programName: String): String? {
@@ -251,7 +251,7 @@ class StatisticsService(
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
 
-        return wordCountRepository.findFirstMostUsedWordInProgram(program.programId!!, program.startDate, program.endDate)
+        return wordCountRepository.findFirstMostUsedWordInProgram(studentId, program.startDate, program.endDate)
     }
 
     fun getMyRank(email: String, programName: String): Int {
