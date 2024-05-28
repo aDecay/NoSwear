@@ -81,7 +81,7 @@ class ManageController(
 
     @GetMapping("/students/all")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
-    fun getStudents(): ResponseEntity<List<UserResponse>> {
+    fun getClassStudents(): ResponseEntity<List<UserResponse>> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
@@ -93,7 +93,7 @@ class ManageController(
 
     @GetMapping("/students/program")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
-    fun getStudents(programName: String): ResponseEntity<List<UserResponse>> {
+    fun getProgramStudents(programName: String): ResponseEntity<List<UserResponse>> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
