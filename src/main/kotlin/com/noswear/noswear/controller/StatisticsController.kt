@@ -169,21 +169,21 @@ class StatisticsController(
 
     @GetMapping("/rank")
     @PreAuthorize("hasRole('STUDENT')")
-    fun getMyRank(programName: String): ResponseEntity<Int> {
+    fun getMyRank(programName: String, @RequestParam(required = false) date: LocalDate): ResponseEntity<Int> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val rank = statisticsService.getMyRank(name, programName)
+        val rank = statisticsService.getMyRank(name, programName, date)
         return ResponseEntity.ok(rank)
     }
 
     @GetMapping("/rank/{id}")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
-    fun getMyRank(@PathVariable id: Int, programName: String): ResponseEntity<Int> {
+    fun getMyRank(@PathVariable id: Int, programName: String, @RequestParam(required = false) date: LocalDate?): ResponseEntity<Int> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val rank = statisticsService.getStudentRankByTeacher(name, id, programName)
+        val rank = statisticsService.getStudentRankByTeacher(name, id, programName, date)
         return ResponseEntity.ok(rank)
     }
 }

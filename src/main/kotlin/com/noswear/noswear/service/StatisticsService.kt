@@ -254,7 +254,7 @@ class StatisticsService(
         return wordCountRepository.findFirstMostUsedWordInProgram(studentId, program.startDate, program.endDate)
     }
 
-    fun getMyRank(email: String, programName: String): Int {
+    fun getMyRank(email: String, programName: String, date: LocalDate?): Int {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -269,11 +269,11 @@ class StatisticsService(
             user.id!!,
             program.programId!!,
             program.startDate,
-            program.endDate
+            date ?: program.endDate
         )
     }
 
-    fun getStudentRankByTeacher(email: String, studentId: Int, programName: String): Int {
+    fun getStudentRankByTeacher(email: String, studentId: Int, programName: String, date: LocalDate?): Int {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -288,7 +288,7 @@ class StatisticsService(
             studentId,
             program.programId!!,
             program.startDate,
-            program.endDate
+            date ?: program.endDate
         )
     }
 }
