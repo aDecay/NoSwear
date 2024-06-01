@@ -8,7 +8,8 @@ data class DailyCountResponse(
     val raw: List<Map<String, Any>>,
     val min: Int,
     val max: Int,
-    val avg: Double
+    val avg: Double,
+    val sum: Int
 ) {
     companion object {
         fun of(dailyCountVoList: List<TotalCountRepository.DailyCountVo>, program: Program): DailyCountResponse {
@@ -30,6 +31,7 @@ data class DailyCountResponse(
                     days += 1
                 }
             }
+            val sum = dailyCountVoList.sumOf { it.count }
             return DailyCountResponse(
                 raw = raw,
                 min = if (dailyCountVoList.size == raw.size)
@@ -40,7 +42,8 @@ data class DailyCountResponse(
                     dailyCountVoList.maxOf { it.count }
                 else
                     0,
-                avg = (dailyCountVoList.sumOf { it.count }).toDouble() / days
+                avg = sum.toDouble() / days,
+                sum = sum
             )
         }
     }
