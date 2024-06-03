@@ -23,7 +23,8 @@ class StatisticsService(
     private val userRepository: UserRepository,
     private val belongsRepository: BelongsRepository,
     private val programRepository: ProgramRepository,
-    private val teachesRepository: TeachesRepository
+    private val teachesRepository: TeachesRepository,
+    private val withinRepository: WithinRepository
 ) {
     fun analyzeProfanity(email: String, sendDto: SendDto): Map<String, Int> {
         val result = HashMap<String, Int>()
@@ -289,6 +290,31 @@ class StatisticsService(
             program.programId!!,
             program.startDate,
             date ?: program.endDate
+        )
+    }
+
+    fun getClassRank(email: String, date: LocalDate): Int {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = if (user.role == "STUDENT") {
+            belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .classId
+        } else {
+            teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        }
+
+        val sId = withinRepository.findById(cId)
+            .orElseThrow()
+            .sId
+
+        return totalCountRepository.findClassRankBySchoolIdAndClassIdAndDate(
+            schoolId = sId,
+            classId = cId,
+            date = date
         )
     }
 }

@@ -186,4 +186,14 @@ class StatisticsController(
         val rank = statisticsService.getStudentRankByTeacher(name, id, programName, date)
         return ResponseEntity.ok(rank)
     }
+
+    @GetMapping("/rank/class")
+    @PreAuthorize("isAuthenticated()")
+    fun getClassRank(date: LocalDate): ResponseEntity<Int> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val rank = statisticsService.getClassRank(name, date)
+        return ResponseEntity.ok(rank)
+    }
 }

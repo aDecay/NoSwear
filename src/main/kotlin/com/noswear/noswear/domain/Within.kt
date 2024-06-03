@@ -9,7 +9,7 @@ import java.util.*
 class Within(
     @Id
     val cId: String,
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     val sId: String
 ) {
     override fun equals(other: Any?): Boolean {
