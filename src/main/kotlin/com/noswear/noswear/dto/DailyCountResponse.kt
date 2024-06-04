@@ -34,11 +34,11 @@ data class DailyCountResponse(
             val sum = dailyCountVoList.sumOf { it.count }
             return DailyCountResponse(
                 raw = raw,
-                min = if (dailyCountVoList.size == raw.size)
+                min = if (dailyCountVoList.size == days)
                     dailyCountVoList.minOf { it.count }
                 else
                     0,
-                max = if (dailyCountVoList.size == raw.size)
+                max = if (dailyCountVoList.size == days)
                     dailyCountVoList.maxOf { it.count }
                 else
                     0,
