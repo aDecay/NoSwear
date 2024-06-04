@@ -169,7 +169,7 @@ class StatisticsController(
 
     @GetMapping("/rank")
     @PreAuthorize("hasRole('STUDENT')")
-    fun getMyRank(programName: String, @RequestParam(required = false) date: LocalDate): ResponseEntity<Int> {
+    fun getMyRank(programName: String, @RequestParam(required = false) date: LocalDate?): ResponseEntity<Int> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
