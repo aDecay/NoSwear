@@ -9,6 +9,13 @@ import java.time.LocalDate
 interface WordCountRepository : JpaRepository<WordCount, WordCountId> {
     fun findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(id: Int, date: LocalDate): List<WordCount>
     @Query("SELECT word AS word, SUM(count) AS count " +
+            "FROM word_count " +
+            "WHERE id = :id AND date >= :startDate AND date <= :endDate " +
+            "GROUP BY id " +
+            "ORDER BY count DESC",
+        nativeQuery = true)
+    fun findProgramWordCount(id: Int, startDate: LocalDate, endDate: LocalDate): List<WordCountResultVo>
+    @Query("SELECT word AS word, SUM(count) AS count " +
             "FROM word_count w " +
             "JOIN joins j " +
             "WHERE w.id = j.id AND j.program_id = :programId AND w.date >= :startDate AND w.date <= :endDate " +

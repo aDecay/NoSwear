@@ -144,6 +144,35 @@ class StatisticsService(
         return wordCountRepository.findByWordCountIdIdAndWordCountIdDateOrderByCountDesc(studentId, date)
     }
 
+    fun getProgramWordCount(email: String, programName: String): List<WordCountRepository.WordCountResultVo> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+        val id = user.id!!
+
+        val cId = belongsRepository.findById(user.id!!)
+            .orElseThrow()
+            .classId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return wordCountRepository.findProgramWordCount(id, program.startDate, program.endDate)
+    }
+
+    fun getProgramWordCountByTeacher(email: String, studentId: Int, programName: String): List<WordCountRepository.WordCountResultVo> {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val cId = belongsRepository.findById(studentId)
+            .orElseThrow()
+            .classId
+
+        val program = programRepository.findByClassIdAndProgramName(cId, programName)
+            ?: throw Exception()
+
+        return wordCountRepository.findProgramWordCount(studentId, program.startDate, program.endDate)
+    }
+
     fun getGroupWordCount(email: String, programName: String): List<WordCountRepository.WordCountResultVo> {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
