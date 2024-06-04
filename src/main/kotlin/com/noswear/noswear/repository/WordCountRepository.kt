@@ -11,7 +11,7 @@ interface WordCountRepository : JpaRepository<WordCount, WordCountId> {
     @Query("SELECT word AS word, SUM(count) AS count " +
             "FROM word_count " +
             "WHERE id = :id AND date >= :startDate AND date <= :endDate " +
-            "GROUP BY id " +
+            "GROUP BY word " +
             "ORDER BY count DESC",
         nativeQuery = true)
     fun findProgramWordCount(id: Int, startDate: LocalDate, endDate: LocalDate): List<WordCountResultVo>
