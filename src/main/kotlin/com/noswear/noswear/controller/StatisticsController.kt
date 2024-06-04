@@ -99,31 +99,31 @@ class StatisticsController(
 
     @GetMapping("/count/daily")
     @PreAuthorize("hasRole('STUDENT')")
-    fun getDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
+    fun getDailyCount(programName: String, @RequestParam(required = false) date: LocalDate?): ResponseEntity<DailyCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val result = statisticsService.getDailyCount(name, programName)
+        val result = statisticsService.getDailyCount(name, programName, date)
         return ResponseEntity.ok(result)
     }
 
     @GetMapping("/count/daily/{id}")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
-    fun getDailyCountByTeacher(@PathVariable id: Int, programName: String): ResponseEntity<DailyCountResponse> {
+    fun getDailyCountByTeacher(@PathVariable id: Int, programName: String, @RequestParam(required = false) date: LocalDate?): ResponseEntity<DailyCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val result = statisticsService.getDailyCountByTeacher(name, id, programName)
+        val result = statisticsService.getDailyCountByTeacher(name, id, programName, date)
         return ResponseEntity.ok(result)
     }
 
     @GetMapping("/count/daily/group")
     @PreAuthorize("isAuthenticated()")
-    fun getGroupDailyCount(programName: String): ResponseEntity<DailyCountResponse> {
+    fun getGroupDailyCount(programName: String, @RequestParam(required = false) date: LocalDate?): ResponseEntity<DailyCountResponse> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val result = statisticsService.getGroupDailyCount(name, programName)
+        val result = statisticsService.getGroupDailyCount(name, programName, date)
         return ResponseEntity.ok(result)
     }
 

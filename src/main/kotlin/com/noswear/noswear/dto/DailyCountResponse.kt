@@ -3,6 +3,7 @@ package com.noswear.noswear.dto
 import com.noswear.noswear.domain.Program
 import com.noswear.noswear.repository.TotalCountRepository
 import java.time.DayOfWeek
+import java.time.LocalDate
 
 data class DailyCountResponse(
     val raw: List<Map<String, Any>>,
@@ -12,11 +13,11 @@ data class DailyCountResponse(
     val sum: Int
 ) {
     companion object {
-        fun of(dailyCountVoList: List<TotalCountRepository.DailyCountVo>, program: Program): DailyCountResponse {
+        fun of(dailyCountVoList: List<TotalCountRepository.DailyCountVo>, program: Program, end: LocalDate?): DailyCountResponse {
             var days = 0
             val raw = buildList {
                 var date = program.startDate
-                while (date <= program.endDate) {
+                while (date <= (end ?: program.endDate)) {
                     val count = dailyCountVoList.find { it.date == date }?.count
                         ?: 0
                     add(

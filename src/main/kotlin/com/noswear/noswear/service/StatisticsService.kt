@@ -163,7 +163,7 @@ class StatisticsService(
         return wordCountRepository.findGroupWordCount(program.programId!!, program.startDate, program.endDate)
     }
 
-    fun getDailyCount(email: String, programName: String): DailyCountResponse {
+    fun getDailyCount(email: String, programName: String, date: LocalDate?): DailyCountResponse {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -174,11 +174,11 @@ class StatisticsService(
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
 
-        val dailyCount = totalCountRepository.findDailyCount(user.id!!, program.startDate, program.endDate)
-        return DailyCountResponse.of(dailyCount, program)
+        val dailyCount = totalCountRepository.findDailyCount(user.id!!, program.startDate, date ?: program.endDate)
+        return DailyCountResponse.of(dailyCount, program, date)
     }
 
-    fun getDailyCountByTeacher(email: String, studentId: Int, programName: String): DailyCountResponse {
+    fun getDailyCountByTeacher(email: String, studentId: Int, programName: String, date: LocalDate?): DailyCountResponse {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -189,11 +189,11 @@ class StatisticsService(
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
 
-        val dailyCount = totalCountRepository.findDailyCount(studentId, program.startDate, program.endDate)
-        return DailyCountResponse.of(dailyCount, program)
+        val dailyCount = totalCountRepository.findDailyCount(studentId, program.startDate, date ?: program.endDate)
+        return DailyCountResponse.of(dailyCount, program, date)
     }
 
-    fun getGroupDailyCount(email: String, programName: String): DailyCountResponse {
+    fun getGroupDailyCount(email: String, programName: String, date: LocalDate?): DailyCountResponse {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -209,8 +209,8 @@ class StatisticsService(
         val program = programRepository.findByClassIdAndProgramName(cId, programName)
             ?: throw Exception()
 
-        val dailyCount = totalCountRepository.findGroupDailyCount(program.programId!!, program.startDate, program.endDate)
-        return DailyCountResponse.of(dailyCount, program)
+        val dailyCount = totalCountRepository.findGroupDailyCount(program.programId!!, program.startDate, date ?: program.endDate)
+        return DailyCountResponse.of(dailyCount, program, date)
     }
 
     fun getMostUsedWordInDay(email: String, date: LocalDate): String? {
