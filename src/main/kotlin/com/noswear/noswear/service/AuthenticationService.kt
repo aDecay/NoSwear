@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthenticationService(
@@ -23,6 +24,7 @@ class AuthenticationService(
     val passwordEncoder: PasswordEncoder,
     val authenticationManager: AuthenticationManager
 ) {
+    @Transactional
     fun teacherRegister(teacherDto: TeacherDto): User {
         val teacherEntity = User(
             email = teacherDto.email,
@@ -77,6 +79,7 @@ class AuthenticationService(
         return teacherResult
     }
 
+    @Transactional
     fun studentRegister(studentDto: StudentDto): User {
         val studentEntity = User(
             email = studentDto.email,
