@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 @RequestMapping("/manage")
 @Controller
@@ -93,11 +94,11 @@ class ManageController(
 
     @GetMapping("/students/program")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
-    fun getProgramStudents(programName: String): ResponseEntity<List<UserResponse>> {
+    fun getProgramStudents(programName: String, @RequestParam(required = false) sorted: Boolean?): ResponseEntity<List<UserResponse>> {
         val authentication = SecurityContextHolder.getContext().authentication
         val name = authentication.name
 
-        val result = manageService.getProgramStudents(name, programName)
+        val result = manageService.getProgramStudents(name, programName, sorted)
         return ResponseEntity.ok(result.map { user ->
             UserResponse.of(user)
         })

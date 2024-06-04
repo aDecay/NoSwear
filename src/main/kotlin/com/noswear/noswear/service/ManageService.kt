@@ -118,7 +118,7 @@ class ManageService(
         }
     }
 
-    fun getProgramStudents(email: String, programName: String): List<User> {
+    fun getProgramStudents(email: String, programName: String, sorted: Boolean?): List<User> {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
@@ -126,8 +126,23 @@ class ManageService(
             .orElseThrow()
             .cId
 
-        return joinsRepository.findByJoinsIdProgramClassIdAndJoinsIdProgramProgramName(cId, programName).map {
-            it.joinsId.user
+        return if (sorted == true) {
+            val program = programRepository.findByClassIdAndProgramName(cId, programName)
+                ?: throw Exception("Program not found")
+
+            joinsRepository.findProgramStudentsSorted(program.programId!!, program.startDate, program.endDate).map {
+                User(
+                    it.id,
+                    it.email,
+                    it.password,
+                    it.name,
+                    it.role
+                )
+            }
+        } else {
+            joinsRepository.findByJoinsIdProgramClassIdAndJoinsIdProgramProgramNameOrderByJoinsIdUserNameAsc(cId, programName).map {
+                it.joinsId.user
+            }
         }
     }
 
