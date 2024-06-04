@@ -39,7 +39,7 @@ data class DailyCountResponse(
                     dailyCountVoList.minOf { it.count }
                 else
                     0,
-                max = if (dailyCountVoList.size == days)
+                max = if (dailyCountVoList.isNotEmpty())
                     dailyCountVoList.maxOf { it.count }
                 else
                     0,
