@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import java.io.File
 import java.lang.Exception
+import java.time.LocalDate
 import java.util.*
 
 @Service
@@ -22,7 +23,8 @@ class ManageService(
     private val worksRepository: WorksRepository,
     private val joinsRepository: JoinsRepository,
     private val belongsRepository: BelongsRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
+    private val withinRepository: WithinRepository
 ) {
     fun createProgram(email: String, programDto: ProgramDto): Program {
         val user = userRepository.findByEmail(email)
@@ -164,6 +166,26 @@ class ManageService(
             ?: throw Exception("Program not found")
 
         return joinsRepository.countByJoinsIdProgramProgramId(program.programId!!)
+    }
+
+    fun getProgramClassCount(email: String, date: LocalDate): Int {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val classId = if (user.role == "STUDENT") {
+            belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .classId
+        } else {
+            teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        }
+
+        val school = withinRepository.findById(classId)
+            .orElseThrow()
+
+        return programRepository.countProceedingClass(school.sId, date)
     }
 
     fun getSchoolCode(email: String): String {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.time.LocalDate
 
 @RequestMapping("/manage")
 @Controller
@@ -111,6 +112,16 @@ class ManageController(
         val name = authentication.name
 
         val result = manageService.getProgramStudentsCount(name, programName)
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/class/program/count")
+    @PreAuthorize("isAuthenticated()")
+    fun getProgramClassCount(date: LocalDate): ResponseEntity<Int> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = manageService.getProgramClassCount(name, date)
         return ResponseEntity.ok(result)
     }
 
