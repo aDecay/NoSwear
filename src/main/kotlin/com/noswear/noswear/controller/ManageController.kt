@@ -104,6 +104,16 @@ class ManageController(
         })
     }
 
+    @GetMapping("/students/program/count")
+    @PreAuthorize("isAuthenticated()")
+    fun getProgramStudentsCount(programName: String): ResponseEntity<Int> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = manageService.getProgramStudentsCount(name, programName)
+        return ResponseEntity.ok(result)
+    }
+
     @GetMapping("/code/school")
     @PreAuthorize("hasAnyRole('MANAGER', 'TEACHER')")
     fun getSchoolCode(): ResponseEntity<String> {

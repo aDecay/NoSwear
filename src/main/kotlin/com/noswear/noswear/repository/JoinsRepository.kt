@@ -9,6 +9,7 @@ import java.time.LocalDate
 
 interface JoinsRepository : JpaRepository<Joins, JoinsId> {
     fun findByJoinsIdUserId(id: Int): List<Joins>
+    fun countByJoinsIdProgramProgramId(id: Int): Int
     fun findByJoinsIdProgramClassIdAndJoinsIdProgramProgramNameOrderByJoinsIdUserNameAsc(cId: String, programName: String): List<Joins>
     @Query("WITH ranked AS( " +
             "SELECT RANK() OVER (ORDER BY COALESCE(SUM(count), 0) ASC) AS rank, j.id " +

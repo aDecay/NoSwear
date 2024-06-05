@@ -146,6 +146,26 @@ class ManageService(
         }
     }
 
+    fun getProgramStudentsCount(email: String, programName: String): Int {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val classId = if (user.role == "STUDENT") {
+            belongsRepository.findById(user.id!!)
+                .orElseThrow()
+                .classId
+        } else {
+            teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+        }
+
+        val program = programRepository.findByClassIdAndProgramName(classId, programName)
+            ?: throw Exception("Program not found")
+
+        return joinsRepository.countByJoinsIdProgramProgramId(program.programId!!)
+    }
+
     fun getSchoolCode(email: String): String {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
