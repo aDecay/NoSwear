@@ -8,6 +8,7 @@ import com.noswear.noswear.dto.DailyCountResponse
 import com.noswear.noswear.dto.SendDto
 import com.noswear.noswear.repository.*
 import com.noswear.noswear.utils.ProfanityUtil
+import mu.KotlinLogging
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import java.io.BufferedReader
@@ -15,6 +16,8 @@ import java.io.File
 import java.io.InputStreamReader
 import java.time.LocalDate
 import java.util.*
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class StatisticsService(
@@ -50,7 +53,7 @@ class StatisticsService(
         val process = processBuilder.start()
         BufferedReader(InputStreamReader(process.inputStream))
             .forEachLine { line ->
-                println(line)
+                logger.info(line)
                 line.split(" ").map { split ->
                     badWords.forEach { word ->
                         if (split.contains(word)) {
