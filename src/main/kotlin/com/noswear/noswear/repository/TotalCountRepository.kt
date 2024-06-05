@@ -23,7 +23,7 @@ interface TotalCountRepository : JpaRepository<TotalCount, TotalCountId> {
             "SELECT RANK() OVER (ORDER BY COALESCE(SUM(count), 0) ASC) AS rank, b.class_id " +
             "FROM within w " +
             "LEFT OUTER JOIN belongs b " +
-            "ON w.c_id = b.class_id AND w.s_id=:schoolId " +
+            "ON w.c_id = b.class_id AND w.s_id = :schoolId " +
             "LEFT OUTER JOIN total_count t " +
             "ON t.id = b.id AND t.date=:date " +
             "WHERE EXISTS( " +
@@ -31,7 +31,7 @@ interface TotalCountRepository : JpaRepository<TotalCount, TotalCountId> {
             "FROM program p " +
             "WHERE p.class_id = w.c_id AND :date BETWEEN p.start_date AND p.end_date) " +
             "GROUP BY b.class_id) " +
-            "SELECT rank FROM ranked WHERE class_id=:classId;",
+            "SELECT rank FROM ranked WHERE class_id = :classId",
         nativeQuery = true)
     fun findClassRankBySchoolIdAndClassIdAndDate(schoolId: String, classId: String, date: LocalDate): Int
 
