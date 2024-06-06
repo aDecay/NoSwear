@@ -136,6 +136,19 @@ class ManageService(
         return program
     }
 
+    fun cancelProgram(email: String, programName: String) {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val belongs = belongsRepository.findById(user.id!!)
+            .orElseThrow()
+
+        val program = programRepository.findByClassIdAndProgramName(belongs.classId, programName)
+            ?: throw Exception("Program not found")
+
+        joinsRepository.deleteById(JoinsId(user, program))
+    }
+
     fun getClassStudents(email: String): List<User> {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")

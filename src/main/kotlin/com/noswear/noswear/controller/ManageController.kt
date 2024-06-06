@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -102,6 +103,16 @@ class ManageController(
 
         val program = manageService.joinProgram(name, joinDto)
         return ResponseEntity.ok(ProgramDto.of(program))
+    }
+
+    @DeleteMapping("/program/join")
+    @PreAuthorize("hasRole('STUDENT')")
+    fun cancelProgram(programName: String): ResponseEntity<String> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        manageService.cancelProgram(name, programName)
+        return ResponseEntity.ok("success")
     }
 
     @GetMapping("/students/all")
