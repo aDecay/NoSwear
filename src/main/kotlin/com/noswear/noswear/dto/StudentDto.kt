@@ -4,5 +4,6 @@ data class StudentDto (
     val email: String,
     val password: String,
     val name: String,
-    val classId: String
+    val classId: String,
+    val voice: String
 )

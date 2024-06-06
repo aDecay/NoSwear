@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.io.File
+import java.util.*
 
 @Service
 class AuthenticationService(
@@ -96,6 +98,11 @@ class AuthenticationService(
         )
 
         belongsRepository.save(belongsEntity)
+
+        val path = "./voice_files/${studentResult.id!!}.m4a"
+        val byteArray = Base64.getDecoder().decode(studentDto.voice)
+        val file = File(path)
+        file.writeBytes(byteArray)
 
         return studentResult
     }
