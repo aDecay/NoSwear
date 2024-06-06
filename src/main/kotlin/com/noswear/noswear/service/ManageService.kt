@@ -44,6 +44,18 @@ class ManageService(
         return programRepository.save(program)
     }
 
+    fun checkDate(email: String, startDate: LocalDate, endDate: LocalDate): Boolean {
+        val user = userRepository.findByEmail(email)
+            ?: throw UsernameNotFoundException("User not found")
+
+        val classId = teachesRepository.findById(user.id!!)
+                .orElseThrow()
+                .cId
+
+        return programRepository.existsByClassIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(classId, startDate, startDate)
+                || programRepository.existsByClassIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(classId, endDate, endDate)
+    }
+
     fun getALlPrograms(email: String): List<Program> {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")

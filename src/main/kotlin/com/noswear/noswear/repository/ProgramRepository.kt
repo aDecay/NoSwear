@@ -9,6 +9,7 @@ interface ProgramRepository : JpaRepository<Program, Int> {
     fun findByClassIdOrderByStartDateAsc(cId: String): List<Program>
     fun findByClassIdAndStartDateAfterOrderByStartDateAsc(cId: String, date: LocalDate): List<Program>
     fun findByClassIdAndProgramName(cId: String, programName: String): Program?
+    fun existsByClassIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(cId: String, startDate: LocalDate, endDate: LocalDate): Boolean
     @Query("SELECT p " +
             "FROM Program p " +
             "WHERE p.classId = :cId AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE")

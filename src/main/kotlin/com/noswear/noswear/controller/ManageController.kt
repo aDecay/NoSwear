@@ -31,6 +31,16 @@ class ManageController(
         return ResponseEntity.ok(ProgramDto.of(program))
     }
 
+    @GetMapping("/program/check-date")
+    @PreAuthorize("hasRole('TEACHER')")
+    fun checkDate(startDate: LocalDate, endDate: LocalDate): ResponseEntity<Boolean> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val result = manageService.checkDate(name, startDate, endDate)
+        return ResponseEntity.ok(result)
+    }
+
     @GetMapping("/program/get/all")
     @PreAuthorize("isAuthenticated()")
     fun getAllPrograms(): ResponseEntity<List<ProgramDto>> {
