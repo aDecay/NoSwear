@@ -44,6 +44,19 @@ class ManageController(
         return ResponseEntity.ok(programs)
     }
 
+    @GetMapping("/program/get/after")
+    @PreAuthorize("isAuthenticated()")
+    fun getProgramsAfter(date: LocalDate): ResponseEntity<List<ProgramDto>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val name = authentication.name
+
+        val programs = mutableListOf<ProgramDto>()
+        manageService.getProgramsAfter(name, date).map { program ->
+            programs.add(ProgramDto.of(program))
+        }
+        return ResponseEntity.ok(programs)
+    }
+
     @GetMapping("/program/get/me")
     @PreAuthorize("hasRole('STUDENT')")
     fun getMyProgram(): ResponseEntity<List<ProgramDto>> {
