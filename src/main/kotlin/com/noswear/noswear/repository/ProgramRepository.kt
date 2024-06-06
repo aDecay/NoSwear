@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query
 import java.time.LocalDate
 
 interface ProgramRepository : JpaRepository<Program, Int> {
-    fun findByClassId(cId: String): List<Program>
-    fun findByClassIdAndStartDateAfter(cId: String, date: LocalDate): List<Program>
+    fun findByClassIdOrderByStartDateAsc(cId: String): List<Program>
+    fun findByClassIdAndStartDateAfterOrderByStartDateAsc(cId: String, date: LocalDate): List<Program>
     fun findByClassIdAndProgramName(cId: String, programName: String): Program?
     @Query("SELECT p " +
             "FROM Program p " +

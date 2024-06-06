@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query
 import java.time.LocalDate
 
 interface JoinsRepository : JpaRepository<Joins, JoinsId> {
-    fun findByJoinsIdUserId(id: Int): List<Joins>
+    fun findByJoinsIdUserIdOrderByJoinsIdProgramStartDateAsc(id: Int): List<Joins>
     fun countByJoinsIdProgramProgramId(id: Int): Int
     fun findByJoinsIdProgramClassIdAndJoinsIdProgramProgramNameOrderByJoinsIdUserNameAsc(cId: String, programName: String): List<Joins>
     @Query("WITH ranked AS( " +

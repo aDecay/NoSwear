@@ -58,7 +58,7 @@ class ManageService(
                 .cId
         }
 
-        return programRepository.findByClassId(classId)
+        return programRepository.findByClassIdOrderByStartDateAsc(classId)
     }
 
     fun getProgramsAfter(email: String, date: LocalDate): List<Program> {
@@ -75,14 +75,14 @@ class ManageService(
                 .cId
         }
 
-        return programRepository.findByClassIdAndStartDateAfter(classId, date)
+        return programRepository.findByClassIdAndStartDateAfterOrderByStartDateAsc(classId, date)
     }
 
     fun getMyPrograms(email: String): List<Program> {
         val user = userRepository.findByEmail(email)
             ?: throw UsernameNotFoundException("User not found")
 
-        return joinsRepository.findByJoinsIdUserId(user.id!!).map { joins ->
+        return joinsRepository.findByJoinsIdUserIdOrderByJoinsIdProgramStartDateAsc(user.id!!).map { joins ->
             joins.joinsId.program
         }
     }
